@@ -1,0 +1,8 @@
+replicaCount: 1
+
+app:
+  environment: dev
+  greeting: "Hello from DEV"
+
+service:
+  type: NodePort

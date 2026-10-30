@@ -1,0 +1,10 @@
+{{ .Chart.Name }} has been deployed as release "{{ .Release.Name }}" in namespace "{{ .Release.Namespace }}".
+
+Environment : {{ .Values.app.environment }}
+Image       : {{ .Values.image.repository }}:{{ .Values.image.tag }}
+
+To access the app locally, run:
+
+  kubectl port-forward svc/{{ include "myapp.fullname" . }} 8080:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+
+Then open http://localhost:8080

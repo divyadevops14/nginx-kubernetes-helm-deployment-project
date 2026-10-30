@@ -1,0 +1,5 @@
+replicaCount: 2
+
+app:
+  environment: staging
+  greeting: "Hello from STAGING"
