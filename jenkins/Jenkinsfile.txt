@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out the NGINX Helm project from GitHub'
+                checkout scm
+            }
+        }
+
+        stage('Check Tools') {
+            steps {
+                echo 'Checking required tools'
+                bat 'git --version'
+                bat 'helm version'
+                bat 'kubectl version --client'
+            }
+        }
+
+        stage('Validate Helm Chart') {
+            steps {
+                echo 'Validating Helm chart'
+                bat 'helm lint myapp'
+                bat 'helm template myapp ./myapp'
+            }
+        }
+
+        stage('Check Kubernetes') {
+            steps {
+                echo 'Checking Kubernetes cluster'
+                bat 'kubectl cluster-info'
+                bat 'kubectl get nodes'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'SUCCESS: NGINX Helm project validation completed!'
+        }
+        failure {
+            echo 'FAILED: Check the Jenkins console output for details.'
+        }
+    }
+}
