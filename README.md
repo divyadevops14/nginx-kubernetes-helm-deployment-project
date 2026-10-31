@@ -1,169 +1,145 @@
-# 🚀 Nginx Kubernetes Deployment Using Helm & Jenkins
+# 🚀 Nginx on Kubernetes | Helm & Jenkins CI/CD
 
-Automated Kubernetes application deployment using **Helm, Jenkins CI/CD, Docker Desktop Kubernetes, and GitHub**. This project demonstrates Helm chart validation, automated deployments, and Kubernetes workload verification through a Jenkins pipeline.
+Deploy Nginx on Kubernetes using **Helm and Jenkins**! This project demonstrates automated application deployment, chart validation, and CI/CD pipeline integration.
 
----
-
-## Repository Layout
+## 📁 Project Structure
 
 ```text
 nginx-kubernetes-helm-deployment-project/
 │
-├── myapp/
-│   ├── Chart.yaml              # Helm chart metadata
-│   ├── values.yaml             # Configurable deployment values
-│   └── templates/
-│       ├── _helpers.tpl        # Reusable Helm template helpers
-│       ├── configmap.yaml      # Application configuration
-│       ├── deployment.yaml     # Kubernetes Deployment
-│       └── service.yaml        # Kubernetes Service
+├── .gitignore              # Ignores sensitive and temporary files
+├── README.md               # Project documentation
 │
-├── jenkins/
-│   └── Jenkinsfile             # Automated CI/CD pipeline
+├── myapp/                  # Nginx Helm chart
+│   ├── Chart.yaml          # Chart name, version, and metadata
+│   ├── values.yaml         # Default configurable deployment settings
+│   └── templates/          # Kubernetes resource templates
+│       ├── _helpers.tpl    # Reusable Helm template functions
+│       ├── configmap.yaml  # Application configuration
+│       ├── deployment.yaml # Nginx pods, image, and replicas
+│       └── service.yaml    # Application network access
 │
-└── README.md                   # Project documentation
+└── jenkins/
+    └── Jenkinsfile         # Automated CI/CD pipeline
 ```
 
----
+**Helm configuration:** `values.yaml` stores default settings consumed by the templates. These may include the container image, replica count, and service configuration. The exact keys depend on the contents of your file.
 
-## What This Project Deploys
+## 🔄 CI/CD Workflow
 
 ```text
-GitHub Repository
-       │
-       ▼
-Jenkins CI/CD Pipeline
-       │
-       ├── Checkout Source Code
-       │
-       ├── Helm Chart Lint
-       │
-       ├── Validate Kubernetes Manifests
-       │
-       ├── Deploy / Upgrade Using Helm
-       │
-       └── Verify Deployment
-                 │
-                 ▼
-       Docker Desktop Kubernetes
-                 │
-                 ▼
-          Nginx Application
+GitHub → Jenkins → Helm Validation
+                    ↓
+              Manifest Validation
+                    ↓
+               Helm Deploy
+                    ↓
+          Kubernetes (Docker Desktop)
+                    ↓
+               Nginx App
+                    ↓
+                 Verify
 ```
 
----
+## 🛠️ Tech Stack
 
-## Technology Stack
+Kubernetes | Helm | Jenkins | Docker Desktop | Git | GitHub | Nginx
 
-| Technology | Purpose |
-|---|---|
-| Kubernetes | Container orchestration |
-| Helm | Kubernetes package management |
-| Jenkins | CI/CD pipeline automation |
-| Docker Desktop | Local Kubernetes environment |
-| Git & GitHub | Source code management |
-| Nginx | Web server |
+## 📋 Prerequisites
 
----
+Before deployment, make sure you have:
 
-## Quick Start
+- **Docker Desktop** – Kubernetes enabled and running.
+- **kubectl** – To communicate with the Kubernetes cluster.
+- **Helm** – To validate and deploy the chart.
+- **Jenkins** – To execute the CI/CD pipeline.
+- **Git** – To clone and manage the repository.
 
-### Step 1 — Check Prerequisites
+Check your installations:
 
-Install and configure:
-- Docker Desktop with Kubernetes enabled
-- kubectl
-- Helm
-- Jenkins
-- Git
+```bash
+docker --version
+kubectl version --client
+helm version
+git --version
+java -version
+```
 
-### Step 2 — Clone the Repository
+Check that Kubernetes is running:
+
+```bash
+kubectl get nodes
+```
+
+## 🚀 Quick Deployment
+
+**1. Clone the repository**
 
 ```bash
 git clone https://github.com/divyadevops14/nginx-kubernetes-helm-deployment-project.git
 cd nginx-kubernetes-helm-deployment-project
 ```
 
-### Step 3 — Validate the Helm Chart
+**2. Validate the chart**
 
 ```bash
 helm lint myapp/
 helm template myapp myapp/
 ```
 
-### Step 4 — Deploy the Application
+**3. Deploy using Helm**
 
 ```bash
 helm upgrade --install myapp myapp/ -n dev --create-namespace
 ```
 
-### Step 5 — Verify the Deployment
+**4. Verify deployment**
 
 ```bash
 kubectl get pods -n dev
 kubectl get deployments -n dev
-kubectl get services -n dev
 helm status myapp -n dev
 ```
 
-### Step 6 — Access Nginx Locally
+**5. Access Nginx**
 
 ```bash
 kubectl port-forward -n dev service/myapp-myapp 8080:80
 ```
 
-Open `http://localhost:8080` in your browser while port forwarding is running.
+Open: [http://localhost:8080](http://localhost:8080)
 
----
+## ⚙️ Jenkins Pipeline
 
-## Jenkins CI/CD Pipeline
-
-The `jenkins/Jenkinsfile` automates the application deployment workflow.
-
-```text
-Checkout → Helm Lint → Manifest Validation → Helm Deploy → Verify
-```
-
-| Stage | Purpose |
+| Stage | Action |
 |---|---|
-| Checkout | Retrieves project code from GitHub |
-| Helm Chart Lint | Checks Helm chart structure and configuration |
-| Manifest Validation | Renders Kubernetes manifests for validation |
-| Deploy with Helm | Installs or upgrades the application |
-| Verify | Checks Kubernetes pods and Helm release status |
+| Checkout | Fetch code from GitHub |
+| Helm Lint | Validate Helm chart |
+| Manifest Validation | Generate Kubernetes manifests |
+| Deploy | Install or upgrade using Helm |
+| Verify | Check deployment and pods |
 
----
+## ✅ Deployment Results
 
-## Deployment Verification
-
-The application was successfully deployed to the local Kubernetes cluster.
-
-- **Helm Release:** `myapp`
+- **Helm Release:** `myapp` — Deployed
 - **Namespace:** `dev`
-- **Application:** Nginx
 - **Replicas:** 2
-- **Pod Status:** Running
-- **Deployment Status:** Successful
+- **Pods:** 2/2 Running
+- **Deployment:** 2/2 Available
+- **Jenkins:** Pipeline successful
+
+## ⭐ Key Learnings
+
+- Created reusable Helm charts.
+- Deployed Nginx on Kubernetes.
+- Automated deployment using Jenkins.
+- Integrated GitHub with Jenkins.
+- Validated and verified Kubernetes resources.
+
+**Environment:** Local Docker Desktop Kubernetes — no active AWS EKS cluster required.
 
 ---
 
-## Key Highlights
+**Built as part of my AWS DevOps interview preparation.**
 
-- Automated Kubernetes deployment through Jenkins.
-- Reusable and configurable Helm chart.
-- Automated Helm chart and manifest validation.
-- Repeatable application installation and upgrades.
-- Kubernetes workload and release verification.
-- Practical experience with Git-based CI/CD workflows.
-
----
-
-## Project Goal
-
-Built as a hands-on project for **AWS DevOps interview preparation**, focusing on Kubernetes, Helm, Jenkins, Git, and CI/CD automation.
-
-**Note:** This project currently runs on local Docker Desktop Kubernetes. It does not require an active AWS EKS cluster.
-
----
-
-⭐ If you find this project useful, feel free to explore the repository!
+⭐ Kubernetes | Helm | Jenkins | Docker | GitHub
