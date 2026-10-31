@@ -11,7 +11,7 @@ pipeline {
         RELEASE    = 'myapp'
         NAMESPACE  = 'dev'
         CHART_DIR  = 'helm/myapp'
-        PATH = "C:\\Program Files\\Git\\cmd;C:\\helm;C:\\kubectl;${env.PATH}"
+        PATH = "C:\\Program Files\\Git\\cmd;C:\\ProgramData\\chocolatey\\bin;C:\\Users\\Divya\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
     }
 
     stages {
