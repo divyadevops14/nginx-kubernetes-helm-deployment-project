@@ -1,0 +1,40 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials/
+
+# Kubernetes configuration
+kubeconfig
+kubeconfig.*
+.kube/
+
+# Terraform files
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Local configuration
+*.local
+*.log
+*.tmp
+*.bak
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Jenkins local files
+jenkins/secrets/
