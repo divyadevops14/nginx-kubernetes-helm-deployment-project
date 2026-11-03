@@ -1,158 +1,228 @@
-# Application Deployment Using Helm
+<div align="center">
 
-A small Flask app packaged as a **Helm chart** and deployed to a **local Kubernetes cluster**
-(no AWS / EKS costs). Includes separate dev / staging / prod configs, health probes,
-autoscaling, upgrade + rollback, and a Jenkins pipeline.
+# 🚀 Nginx on Kubernetes with Helm \& Jenkins CI/CD
 
-## Architecture
+## 📑 Table of Contents
+
+* [Overview](#-overview)
+* [Project Highlights](#-project-highlights)
+* [Architecture](#️-architecture)
+* [Project Structure](#-project-structure)
+* [Prerequisites](#-prerequisites)
+* [Quick Start](#-quick-start)
+* [Jenkins Pipeline](#️-jenkins-pipeline)
+* [Evidence \& Screenshots](#-evidence--screenshots)
+* [Key Results](#-key-results)
+* [Troubleshooting](#-troubleshooting)
+* [Key Learnings](#-key-learnings)
+* [Author](#-author)
+
+\---
+
+## 📖 Overview
+
+This project packages **Nginx** as a reusable **Helm chart** and deploys it to a local **Kubernetes** cluster (Docker Desktop) through a **Jenkins CI/CD pipeline**. Each push to GitHub can be linted, rendered, deployed and verified automatically.
+
+> \*\*Simple • Automated • Reliable\*\*
+
+\---
+
+## ⭐ Project Highlights
+
+* ✅ Build a reusable **Helm chart**
+* ✅ Validate with **`helm lint`** and **`helm template`**
+* ✅ Deploy using **`helm upgrade --install`**
+* ✅ Automate the whole flow with **Jenkins CI/CD**
+* ✅ Verify Kubernetes resources after every deployment
+
+\---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    A\[👩‍💻 Developer] -->|git push| B\[GitHub]
+    B -->|checkout| C\[Jenkins Pipeline]
+    C --> D\[Helm Lint]
+    D --> E\[Manifest Validation]
+    E --> F\[Deploy with Helm]
+    F --> G\[(Kubernetes<br/>Docker Desktop)]
+    G --> H\[Nginx Pods x2]
+    H --> I\[Verify Deployment]
+```
+
+\---
+
+## 📁 Project Structure
 
 ```
- Developer -> GitHub -> Jenkins -> docker build -> helm lint -> helm upgrade --install -> Kubernetes
-                                                                                   |
-                                                       Deployment (pods) <- ConfigMap
-                                                            |
-                                                         Service -> (Ingress optional)
-```
-
-## Project structure
-
-```
-helm-app-deployment/
-├── app/
-│   ├── app.py              # Flask app (/, /health)
-│   ├── requirements.txt
-│   └── Dockerfile
-├── helm/myapp/
-│   ├── Chart.yaml          # chart name + versions
-│   ├── values.yaml         # defaults
-│   ├── values-dev.yaml     # env overrides
-│   ├── values-staging.yaml
-│   ├── values-prod.yaml
+nginx-kubernetes-helm-deployment-project/
+│
+├── .gitignore               # Ignores sensitive and temporary files
+├── README.md                # Project documentation
+│
+├── myapp/                   # Nginx Helm chart
+│   ├── Chart.yaml           # Chart name, version, metadata
+│   ├── values.yaml          # Default configurable settings
 │   └── templates/
-│       ├── _helpers.tpl    # reusable names/labels
-│       ├── configmap.yaml
-│       ├── deployment.yaml
-│       ├── service.yaml
-│       ├── ingress.yaml    # only if ingress.enabled
-│       ├── hpa.yaml        # only if autoscaling.enabled
-│       └── NOTES.txt
-├── Jenkinsfile
-└── README.md
+│       ├── \_helpers.tpl     # Reusable template functions
+│       ├── configmap.yaml   # Application configuration
+│       ├── deployment.yaml  # Nginx pods, image, replicas
+│       └── service.yaml     # Network access to the app
+│
+├── jenkins/
+│   └── Jenkinsfile          # CI/CD pipeline definition
+│
+└── docs/
+    └── images/              # Overview graphic and evidence screenshots
 ```
 
-## Prerequisites
+\---
 
-Docker Desktop (with Kubernetes enabled) **or** minikube / kind, plus `kubectl` and `helm`.
+## 📋 Prerequisites
+
+* Docker Desktop with **Kubernetes enabled**
+* `kubectl`, `helm`, `git` and Java (for Jenkins)
+* A running Jenkins server with access to this repository
 
 ```bash
 docker --version
 kubectl version --client
 helm version
-kubectl config get-contexts     # pick a LOCAL context, e.g. docker-desktop / minikube / kind-kind
+git --version
+kubectl get nodes
 ```
 
-## Step 1: Build the image
+\---
+
+## 🚀 Quick Start
+
+**1. Clone the repository**
 
 ```bash
-cd helm-app-deployment
-docker build -t myapp:1.0.0 app/
+git clone https://github.com/divyadevops14/nginx-kubernetes-helm-deployment-project.git
+cd nginx-kubernetes-helm-deployment-project
 ```
 
-Load it into your cluster (Docker Desktop shares images automatically; others need this):
+**2. Validate the chart**
 
 ```bash
-minikube image load myapp:1.0.0        # minikube
-kind load docker-image myapp:1.0.0     # kind
+helm lint myapp/
+helm template myapp myapp/
 ```
 
-## Step 2: Validate the chart (no cluster needed)
+**3. Deploy with Helm**
 
 ```bash
-helm lint helm/myapp
-helm template myapp helm/myapp -f helm/myapp/values-dev.yaml     # view generated YAML
-helm install myapp helm/myapp --dry-run --debug -n dev
+helm upgrade --install myapp myapp/ -n dev --create-namespace
 ```
 
-## Step 3: Deploy to dev
+**4. Verify the deployment**
 
 ```bash
-helm upgrade --install myapp helm/myapp \
-  -n dev --create-namespace \
-  -f helm/myapp/values-dev.yaml
-
-helm list -n dev
-kubectl get pods,svc -n dev
-```
-
-Access the app:
-
-```bash
-kubectl port-forward svc/myapp-myapp 8080:80 -n dev
-# open http://localhost:8080      -> {"environment":"dev", ...}
-```
-
-## Step 4: Other environments
-
-```bash
-helm upgrade --install myapp-staging helm/myapp -n staging --create-namespace -f helm/myapp/values-staging.yaml
-helm upgrade --install myapp-prod    helm/myapp -n prod    --create-namespace -f helm/myapp/values-prod.yaml
-```
-
-Same chart, different values: that is the main benefit of Helm.
-
-## Step 5: Upgrade, scale and rollback (demo this!)
-
-```bash
-# Scale with --set
-helm upgrade myapp helm/myapp -n dev -f helm/myapp/values-dev.yaml --set replicaCount=3
 kubectl get pods -n dev
-
-# Change the message (ConfigMap change restarts pods automatically)
-helm upgrade myapp helm/myapp -n dev -f helm/myapp/values-dev.yaml --set app.greeting="Version 2!"
-
-# Break it on purpose
-helm upgrade myapp helm/myapp -n dev -f helm/myapp/values-dev.yaml --set image.tag=does-not-exist
-kubectl get pods -n dev          # ImagePullBackOff / ErrImagePull
-
-# Roll back
-helm history myapp -n dev
-helm rollback myapp 2 -n dev
+kubectl get deployments -n dev
 helm status myapp -n dev
 ```
 
-## Step 6: Jenkins pipeline
+**5. Access Nginx**
 
-The `Jenkinsfile` runs: Checkout -> Helm lint -> Docker build -> Helm deploy -> Verify (auto rollback on failure).
+```bash
+kubectl port-forward -n dev service/myapp-myapp 8080:80
+```
 
-Requirements for the Jenkins machine/agent: `docker`, `helm` and `kubectl` on PATH, and a kubeconfig that
-points at your local cluster (Jenkins must run on the same machine as the cluster, or be given its kubeconfig).
-Create a Pipeline job -> "Pipeline script from SCM" -> your GitHub repo.
+Open 👉 [http://localhost:8080](http://localhost:8080)
 
-## Cleanup
+**6. Clean up (optional)**
 
 ```bash
 helm uninstall myapp -n dev
-helm uninstall myapp-staging -n staging
-helm uninstall myapp-prod -n prod
-kubectl delete ns dev staging prod
+kubectl delete namespace dev
 ```
 
-## What to explain in a viva / interview
+\---
 
-- **Why Helm?** Templating, one chart for many environments, versioned releases, one-command rollback.
-- **Chart vs release:** a chart is the package; a release is one installed instance of it.
-- **values.yaml:** defaults, overridden by `-f file` and then by `--set` (right-most wins).
-- **checksum/config annotation:** changing the ConfigMap changes the pod template, so pods restart.
-- **Probes:** readiness gates traffic; liveness restarts a stuck container.
-- **HPA:** enabled only in prod; `replicas` is omitted from the Deployment when HPA is on.
-- **Rollback:** `helm history` + `helm rollback <release> <revision>`.
+## ⚙️ Jenkins Pipeline
 
-## Troubleshooting
+|#|Stage|What it does|
+|-|-|-|
+|1|**Checkout Code**|Pulls the latest code from GitHub|
+|2|**Helm Lint**|Validates chart structure and syntax|
+|3|**Manifest Validation**|Renders templates into Kubernetes manifests|
+|4|**Deploy with Helm**|Installs or upgrades the release|
+|5|**Verify Deployment**|Confirms pods and deployments are healthy|
 
-| Symptom | Likely cause / fix |
-|---|---|
-| `ImagePullBackOff` | Image not in cluster. Load it (`minikube image load` / `kind load`) and keep `pullPolicy: IfNotPresent` |
-| `CrashLoopBackOff` | `kubectl logs <pod> -n dev` |
-| `helm lint` YAML error | Indentation in templates; run `helm template` to see where |
-| Pods Pending | Not enough resources; lower `resources` or `replicaCount` |
-| Jenkins can't reach cluster | Wrong/missing kubeconfig for the Jenkins user |
+Pipeline definition: [`jenkins/Jenkinsfile`](jenkins/Jenkinsfile)
+
+\---
+
+## 📸 Evidence \& Screenshots
+
+> Proof that the project works end to end. Images are stored in \[`docs/images/`](docs/images/).
+
+|Step|Screenshot|
+|-|-|
+|**1. Helm chart validation**|!\[Helm lint and template](docs/images/01-helm-lint-template.png)|
+|**2. Helm release deployed**|!\[Helm status](docs/images/02-helm-status.png)|
+|**3. Pods and deployments running**|!\[kubectl pods and deployments](docs/images/03-kubectl-pods-deployments.png)|
+|**4. Nginx in the browser**|!\[Nginx welcome page](docs/images/04-nginx-browser.png)|
+|**5. Jenkins stage view**|!\[Jenkins stage view](docs/images/05-jenkins-stage-view.png)|
+|**6. Jenkins successful build**|!\[Jenkins console success](docs/images/06-jenkins-console-success.png)|
+
+\---
+
+## 🏆 Key Results
+
+|Item|Result|
+|-|-|
+|Helm release|`myapp` ✅ Deployed|
+|Namespace|`dev`|
+|Replicas|2|
+|Pods|2/2 Running|
+|Deployment|2/2 Available|
+|Jenkins build|✅ Successful|
+
+\---
+
+## 🧰 Troubleshooting
+
+|Problem|Fix|
+|-|-|
+|`kubectl get nodes` fails|Enable Kubernetes in Docker Desktop and wait until it shows running|
+|Jenkins cannot find `helm` or `kubectl`|Add their folders to the system `PATH` and restart the Jenkins service|
+|Jenkins cannot reach the cluster|Jenkins running as the SYSTEM account has no kubeconfig; run the service as your user or set `KUBECONFIG`|
+|`port-forward` service not found|Run `kubectl get svc -n dev` and use the exact service name|
+|Port 8080 already in use|Use another local port, for example `8081:80`|
+
+\---
+
+## 🎓 Key Learnings
+
+* Designing **reusable Helm charts** with templates and values
+* Using **`helm lint` and `helm template`** as quality gates before deploying
+* Making releases repeatable with **`helm upgrade --install`**
+* **Integrating GitHub with Jenkins** for automated pipelines
+* **Verifying** Kubernetes resources instead of assuming a deploy worked
+
+\---
+
+## 👩‍💻 Author
+
+### **Divya Mirapakayala**
+
+**DevOps Engineer (Aspiring) | Kubernetes • Helm • Jenkins • Docker • AWS**
+
+I designed, deployed, tested, and debugged this project end to end on a local Kubernetes cluster.
+
+[!\[GitHub](https://img.shields.io/badge/GitHub-divyadevops14-181717?style=for-the-badge\&logo=github)](https://github.com/divyadevops14)
+\[📧 Contact Me](mailto:divyamirapakayala1@gmail.com)
+
+<sub>🛠️ Tools used along the way: Claude and ChatGPT as AI assistants for guidance and troubleshooting.</sub>
+
+\---
+
+<div align="center">
+
+**Built with curiosity. Deployed with automation. Ready for production-grade DevOps.**
+
+</div>

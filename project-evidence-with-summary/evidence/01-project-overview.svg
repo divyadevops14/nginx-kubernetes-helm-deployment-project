@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0b2a5b"/><stop offset="1" stop-color="#143d7a"/>
+    </linearGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f3b73"/>
+    </marker>
+    <filter id="sh" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0b2a5b" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#f4f8ff"/>
+
+  <!-- Header -->
+  <rect x="30" y="24" width="1540" height="130" rx="28" fill="url(#hdr)" filter="url(#sh)"/>
+  <text x="800" y="82" text-anchor="middle" font-size="46" font-weight="800" fill="#ffffff">
+    <tspan fill="#4ade80">Nginx</tspan> on <tspan fill="#60a5fa">Kubernetes</tspan> with <tspan fill="#fbbf24">Helm</tspan> &amp; <tspan fill="#fbbf24">Jenkins</tspan> CI/CD
+  </text>
+  <text x="800" y="124" text-anchor="middle" font-size="22" font-style="italic" fill="#cfe0ff">Automated deployment of an Nginx application to Kubernetes using a custom Helm chart and a Jenkins pipeline</text>
+
+  <!-- Tool chips -->
+  <g font-size="20" font-weight="600" text-anchor="middle">
+    <rect x="260" y="176" width="170" height="46" rx="23" fill="#dbe8ff" stroke="#326ce5"/><text x="345" y="206" fill="#1d4ed8">Kubernetes</text>
+    <rect x="450" y="176" width="130" height="46" rx="23" fill="#dfe3ff" stroke="#0f1689"/><text x="515" y="206" fill="#0f1689">Helm</text>
+    <rect x="600" y="176" width="150" height="46" rx="23" fill="#fde2e2" stroke="#d24939"/><text x="675" y="206" fill="#b3321f">Jenkins</text>
+    <rect x="770" y="176" width="200" height="46" rx="23" fill="#dff1ff" stroke="#2496ed"/><text x="870" y="206" fill="#0b6bb8">Docker Desktop</text>
+    <rect x="990" y="176" width="130" height="46" rx="23" fill="#dcfce7" stroke="#009639"/><text x="1055" y="206" fill="#047857">Nginx</text>
+    <rect x="1140" y="176" width="150" height="46" rx="23" fill="#e5e7eb" stroke="#374151"/><text x="1215" y="206" fill="#1f2937">GitHub</text>
+  </g>
+
+  <!-- Flow row -->
+  <g filter="url(#sh)">
+    <!-- Developer -->
+    <rect x="30" y="260" width="200" height="250" rx="18" fill="#e8f1ff" stroke="#3b82f6" stroke-width="2"/>
+    <rect x="30" y="260" width="200" height="46" rx="18" fill="#2563eb"/><rect x="30" y="285" width="200" height="21" fill="#2563eb"/>
+    <text x="130" y="292" text-anchor="middle" font-size="24" font-weight="700" fill="#fff">Developer</text>
+    <rect x="75" y="335" width="110" height="72" rx="8" fill="#1e293b"/>
+    <rect x="83" y="343" width="94" height="56" rx="4" fill="#38bdf8" opacity="0.85"/>
+    <rect x="60" y="407" width="140" height="10" rx="5" fill="#475569"/>
+    <text x="130" y="458" text-anchor="middle" font-size="20" font-weight="600" fill="#1e293b">Writes Helm chart</text>
+    <text x="130" y="484" text-anchor="middle" font-size="20" font-weight="600" fill="#1e293b">&amp; Jenkinsfile</text>
+
+    <!-- GitHub -->
+    <rect x="290" y="260" width="200" height="250" rx="18" fill="#efeaff" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="290" y="260" width="200" height="46" rx="18" fill="#6d28d9"/><rect x="290" y="285" width="200" height="21" fill="#6d28d9"/>
+    <text x="390" y="292" text-anchor="middle" font-size="24" font-weight="700" fill="#fff">GitHub</text>
+    <circle cx="390" cy="375" r="46" fill="#1f2937"/>
+    <text x="390" y="388" text-anchor="middle" font-size="36" font-weight="800" fill="#fff">Git</text>
+    <text x="390" y="458" text-anchor="middle" font-size="20" font-weight="600" fill="#1e293b">Stores project code</text>
+    <text x="390" y="484" text-anchor="middle" font-size="18" fill="#475569">main branch</text>
+
+    <!-- Jenkins pipeline -->
+    <rect x="550" y="260" width="620" height="250" rx="18" fill="#e0efff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="550" y="260" width="620" height="46" rx="18" fill="#1d4ed8"/><rect x="550" y="285" width="620" height="21" fill="#1d4ed8"/>
+    <text x="860" y="292" text-anchor="middle" font-size="24" font-weight="700" fill="#fff">Jenkins Pipeline (jenkins/Jenkinsfile)</text>
+
+    <g font-size="19" font-weight="700" text-anchor="middle" fill="#1e293b">
+      <circle cx="620" cy="375" r="38" fill="#fff" stroke="#2563eb" stroke-width="3"/><text x="620" y="384" font-size="26" fill="#2563eb">1</text>
+      <text x="620" y="445">Checkout</text><text x="620" y="468">Code</text>
+
+      <circle cx="740" cy="375" r="38" fill="#fff" stroke="#2563eb" stroke-width="3"/><text x="740" y="384" font-size="26" fill="#2563eb">2</text>
+      <text x="740" y="445">Helm</text><text x="740" y="468">Lint</text>
+
+      <circle cx="860" cy="375" r="38" fill="#fff" stroke="#2563eb" stroke-width="3"/><text x="860" y="384" font-size="26" fill="#2563eb">3</text>
+      <text x="860" y="445">Manifest</text><text x="860" y="468">Validation</text>
+
+      <circle cx="980" cy="375" r="38" fill="#fff" stroke="#2563eb" stroke-width="3"/><text x="980" y="384" font-size="26" fill="#2563eb">4</text>
+      <text x="980" y="445">Deploy</text><text x="980" y="468">with Helm</text>
+
+      <circle cx="1100" cy="375" r="38" fill="#fff" stroke="#16a34a" stroke-width="3"/><text x="1100" y="386" font-size="30" fill="#16a34a">&#10003;</text>
+      <text x="1100" y="445">Verify</text><text x="1100" y="468">Deployment</text>
+    </g>
+    <g stroke="#1f3b73" stroke-width="3" marker-end="url(#arr)">
+      <line x1="662" y1="375" x2="696" y2="375"/>
+      <line x1="782" y1="375" x2="816" y2="375"/>
+      <line x1="902" y1="375" x2="936" y2="375"/>
+      <line x1="1022" y1="375" x2="1056" y2="375"/>
+    </g>
+
+    <!-- Kubernetes -->
+    <rect x="1230" y="260" width="170" height="250" rx="18" fill="#e3f8e9" stroke="#16a34a" stroke-width="2"/>
+    <rect x="1230" y="260" width="170" height="60" rx="18" fill="#15803d"/><rect x="1230" y="295" width="170" height="25" fill="#15803d"/>
+    <text x="1315" y="286" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">Kubernetes</text>
+    <text x="1315" y="309" text-anchor="middle" font-size="16" fill="#d9f99d">Docker Desktop</text>
+    <polygon points="1315,345 1352,364 1352,404 1315,423 1278,404 1278,364" fill="#326ce5"/>
+    <circle cx="1315" cy="384" r="16" fill="none" stroke="#fff" stroke-width="4"/>
+    <text x="1315" y="462" text-anchor="middle" font-size="19" font-weight="600" fill="#1e293b">Namespace: dev</text>
+    <text x="1315" y="487" text-anchor="middle" font-size="18" fill="#475569">Release: myapp</text>
+
+    <!-- Nginx -->
+    <rect x="1430" y="260" width="140" height="250" rx="18" fill="#e3f8e9" stroke="#009639" stroke-width="2"/>
+    <rect x="1430" y="260" width="140" height="46" rx="18" fill="#047857"/><rect x="1430" y="285" width="140" height="21" fill="#047857"/>
+    <text x="1500" y="292" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">Nginx App</text>
+    <rect x="1445" y="335" width="110" height="70" rx="8" fill="#fff" stroke="#334155" stroke-width="2"/>
+    <rect x="1445" y="335" width="110" height="16" rx="8" fill="#e2e8f0"/>
+    <text x="1500" y="381" text-anchor="middle" font-size="24" font-weight="800" fill="#009639">NGINX</text>
+    <text x="1500" y="448" text-anchor="middle" font-size="16" font-weight="600" fill="#1e293b">2 pods running</text>
+    <text x="1500" y="476" text-anchor="middle" font-size="15" fill="#475569">localhost:8080</text>
+  </g>
+
+  <!-- Flow arrows between boxes -->
+  <g stroke="#1f3b73" stroke-width="4" marker-end="url(#arr)">
+    <line x1="232" y1="385" x2="286" y2="385"/>
+    <line x1="492" y1="385" x2="546" y2="385"/>
+    <line x1="1172" y1="385" x2="1226" y2="385"/>
+    <line x1="1402" y1="385" x2="1426" y2="385"/>
+  </g>
+
+  <!-- Bottom panels -->
+  <g filter="url(#sh)">
+    <!-- What I did -->
+    <rect x="30" y="560" width="500" height="340" rx="18" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="30" y="560" width="500" height="54" rx="18" fill="#1d4ed8"/><rect x="30" y="590" width="500" height="24" fill="#1d4ed8"/>
+    <text x="60" y="597" font-size="26" font-weight="700" fill="#fff">What I Built</text>
+    <g font-size="21" fill="#1e293b">
+      <text x="60" y="655"><tspan fill="#16a34a" font-weight="800">&#10003;</tspan>  Created a reusable Helm chart (myapp)</text>
+      <text x="60" y="697"><tspan fill="#16a34a" font-weight="800">&#10003;</tspan>  Validated with helm lint &amp; template</text>
+      <text x="60" y="739"><tspan fill="#16a34a" font-weight="800">&#10003;</tspan>  Deployed with helm upgrade --install</text>
+      <text x="60" y="781"><tspan fill="#16a34a" font-weight="800">&#10003;</tspan>  Connected GitHub to Jenkins CI/CD</text>
+      <text x="60" y="823"><tspan fill="#16a34a" font-weight="800">&#10003;</tspan>  Verified pods &amp; deployments</text>
+    </g>
+    <rect x="55" y="848" width="450" height="38" rx="19" fill="#e0e7ff"/>
+    <text x="280" y="874" text-anchor="middle" font-size="21" font-weight="700" fill="#3730a3">Simple  •  Automated  •  Reliable</text>
+
+    <!-- Key results -->
+    <rect x="560" y="560" width="480" height="340" rx="18" fill="#fff" stroke="#16a34a" stroke-width="2"/>
+    <rect x="560" y="560" width="480" height="54" rx="18" fill="#15803d"/><rect x="560" y="590" width="480" height="24" fill="#15803d"/>
+    <text x="590" y="597" font-size="26" font-weight="700" fill="#fff">Key Results</text>
+    <g font-size="21" fill="#1e293b">
+      <g stroke="#bbf7d0" stroke-width="1.5">
+        <line x1="580" y1="672" x2="1020" y2="672"/><line x1="580" y1="724" x2="1020" y2="724"/>
+        <line x1="580" y1="776" x2="1020" y2="776"/><line x1="580" y1="828" x2="1020" y2="828"/>
+        <line x1="580" y1="880" x2="1020" y2="880"/>
+      </g>
+      <text x="590" y="655" font-weight="600">Helm Release</text><text x="800" y="655" font-weight="700" fill="#15803d">myapp  Deployed &#10003;</text>
+      <text x="590" y="707" font-weight="600">Namespace</text><text x="800" y="707">dev</text>
+      <text x="590" y="759" font-weight="600">Replicas</text><text x="800" y="759">2</text>
+      <text x="590" y="811" font-weight="600">Pods</text><text x="800" y="811" font-weight="700" fill="#15803d">2/2 Running</text>
+      <text x="590" y="863" font-weight="600">Deployment</text><text x="800" y="863" font-weight="700" fill="#15803d">2/2 Available</text>
+    </g>
+
+    <!-- Browser -->
+    <rect x="1070" y="560" width="500" height="340" rx="18" fill="#fff" stroke="#6d28d9" stroke-width="2"/>
+    <rect x="1070" y="560" width="500" height="54" rx="18" fill="#6d28d9"/><rect x="1070" y="590" width="500" height="24" fill="#6d28d9"/>
+    <text x="1100" y="597" font-size="26" font-weight="700" fill="#fff">Project in Action</text>
+    <rect x="1095" y="635" width="450" height="240" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="1095" y="635" width="450" height="76" rx="10" fill="#f1f5f9"/>
+    <circle cx="1118" cy="656" r="6" fill="#ef4444"/><circle cx="1138" cy="656" r="6" fill="#f59e0b"/><circle cx="1158" cy="656" r="6" fill="#22c55e"/>
+    <rect x="1105" y="672" width="430" height="30" rx="15" fill="#fff" stroke="#cbd5e1"/>
+    <text x="1125" y="693" font-size="17" fill="#334155">http://localhost:8080</text>
+    <text x="1120" y="768" font-size="34" font-weight="800" fill="#0f172a">Welcome to nginx!</text>
+    <text x="1120" y="803" font-size="16" fill="#475569">If you see this page, the nginx web server is</text>
+    <text x="1120" y="826" font-size="16" fill="#475569">successfully installed and working.</text>
+  </g>
+
+  <!-- Footer -->
+  <rect x="30" y="925" width="1540" height="55" rx="27" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="800" y="960" text-anchor="middle" font-size="24" font-weight="700" fill="#0b2a5b">A Complete DevOps Workflow  |  <tspan font-style="italic" font-weight="500">From Code to Live Application on Kubernetes</tspan></text>
+  <text x="1545" y="960" text-anchor="end" font-size="19" font-style="italic" fill="#334155">— Divya Mirapakayala</text>
+</svg>
