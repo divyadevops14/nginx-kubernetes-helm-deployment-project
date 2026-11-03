@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+    }
+
+    environment {
+        RELEASE    = 'myapp'
+        NAMESPACE  = 'dev'
+        CHART_DIR  = 'myapp'
+        KUBECONFIG = 'C:\\Users\\Divya\\.kube\\config'
+        PATH = "C:\\Program Files\\Git\\cmd;C:\\ProgramData\\chocolatey\\bin;C:\\Users\\Divya\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+
+        stage('Lint Helm Chart') {
+            steps {
+                bat 'helm lint %CHART_DIR%'
+                bat 'helm template %RELEASE% %CHART_DIR% > NUL'
+            }
+        }
+
+        stage('Deploy with Helm') {
+            steps {
+                bat '''
+                  helm upgrade --install %RELEASE% %CHART_DIR% ^
+                    -n %NAMESPACE% --create-namespace ^
+                    --wait --timeout 120s
+                '''
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                bat 'kubectl get pods -n %NAMESPACE%'
+                bat 'helm status %RELEASE% -n %NAMESPACE%'
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo 'Deployment failed - rolling back'
+            bat 'helm rollback %RELEASE% -n %NAMESPACE% || exit /b 0'
+        }
+    }
+}
